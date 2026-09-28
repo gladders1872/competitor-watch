@@ -1,0 +1,55 @@
+name: Daily competitor scan
+
+on:
+  schedule:
+    - cron: "17 4 * * *"   # every day at 04:17 UTC (07:17 Israel time)
+  workflow_dispatch:        # adds a "Run workflow" button in the Actions tab
+    inputs:
+      client:
+        description: "Only scan this client id (leave empty for all)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: competitor-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Scan
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.client }}" ]; then
+            python scanner/scan.py --client "${{ github.event.inputs.client }}"
+          else
+            python scanner/scan.py
+          fi
+
+      - name: Save results
+        run: |
+          git config user.name "competitor-watch-bot"
+          git config user.email "competitor-watch-bot@users.noreply.github.com"
+          git add state docs/data
+          if git diff --cached --quiet; then
+            echo "No changes to save"
+          else
+            git commit -m "Scan results $(date -u +%F)"
+            git push
+          fi
