@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Daily tracking of competitor sitemaps: new, removed and changed pages, content types and keyword alerts.">
+<title>Competitor Watch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f4f6f4; --surface:#ffffff; --surface-2:#edf1ee; --ink:#13201b; --ink-2:#4c5a54; --muted:#6b7872;
+  --rule:#d9e0db; --accent:#0f5e50; --accent-soft:#dcebe6; --on-accent:#ffffff;
+  --sand:#8a5410; --sand-bg:#f6e9d2; --sand-rule:#e6cfa6;
+  --added:#1c8a6e; --changed:#d19a1e; --removed:#c9476e;
+  --ok:#1c7a4f; --warn:#9a6500; --err:#b3263a;
+  --shadow:0 1px 2px rgba(19,32,27,.06),0 4px 16px rgba(19,32,27,.05);
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --sans:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f1513; --surface:#161e1b; --surface-2:#1d2724; --ink:#e8eeea; --ink-2:#b4c0ba; --muted:#8e9a94;
+    --rule:#2a3531; --accent:#45b89d; --accent-soft:#1d3a33; --on-accent:#08201a;
+    --sand:#e6b057; --sand-bg:#33291a; --sand-rule:#5a4524;
+    --added:#199e70; --changed:#c98500; --removed:#d55181;
+    --ok:#4cc38a; --warn:#e0a53a; --err:#f06b7e;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0f1513; --surface:#161e1b; --surface-2:#1d2724; --ink:#e8eeea; --ink-2:#b4c0ba; --muted:#8e9a94;
+  --rule:#2a3531; --accent:#45b89d; --accent-soft:#1d3a33; --on-accent:#08201a;
+  --sand:#e6b057; --sand-bg:#33291a; --sand-rule:#5a4524;
+  --added:#199e70; --changed:#c98500; --removed:#d55181;
+  --ok:#4cc38a; --warn:#e0a53a; --err:#f06b7e;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 var(--sans)}
+[hidden]{display:none!important}
+a{color:var(--accent)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px}
+@media (max-width:520px){.wrap{padding-inline:16px}}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in oklab,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;align-items:center;gap:16px;min-height:60px;flex-wrap:wrap;padding-block:8px}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.wordmark{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.02em;color:var(--accent)}
+.brand .name{font-weight:600}
+.brand .sub{color:var(--muted);font-size:13px}
+@media (max-width:640px){.brand .sub{display:none}}
+.field{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
+select,input[type=search],input[type=text]{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:7px 10px;min-height:36px;max-width:100%}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule);background:var(--surface);border-radius:8px;padding:7px 12px;min-height:36px;cursor:pointer;text-decoration:none;color:var(--ink);font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+
+/* hero */
+.hero{padding-block:34px 18px;display:grid;gap:18px}
+.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4.2vw,44px);line-height:1.05;letter-spacing:-.025em;margin:0;text-wrap:balance;max-width:22ch}
+.hero .meta{color:var(--ink-2);display:flex;gap:6px 16px;flex-wrap:wrap;font-size:13px}
+.hero .meta b{color:var(--ink);font-weight:600}
+.controls{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:9px;background:var(--surface);padding:3px}
+.seg button{border:0;background:transparent;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:500;color:var(--ink-2)}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}
+.sample{border:1px dashed var(--sand-rule);background:var(--sand-bg);color:var(--sand);border-radius:10px;padding:10px 14px;font-size:13px}
+
+/* layout */
+main{display:grid;gap:22px;padding-bottom:60px}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:12px;box-shadow:var(--shadow);padding:18px 20px;min-width:0}
+.panel h2{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.panel .head{display:flex;align-items:flex-start;gap:10px 16px;flex-wrap:wrap;margin-bottom:14px}
+.panel .head .note{color:var(--muted);font-size:13px;flex-basis:100%;margin-top:-2px;max-width:70ch}
+.panel .head .tools{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:22px;align-items:start}
+.grid2.even{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:960px){.grid2,.grid2.even{grid-template-columns:minmax(0,1fr)}}
+.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* brief */
+.brief{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.brief .tag{font-family:var(--mono);font-size:11px;background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:3px 8px;white-space:nowrap}
+.brief p{margin:0;max-width:78ch;white-space:pre-line}
+@media (max-width:520px){.brief{grid-template-columns:1fr}}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;display:grid;gap:2px}
+.kpi .v{font-family:var(--display);font-weight:700;font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .l{display:flex;align-items:center;gap:7px;color:var(--ink-2);font-size:13px}
+.kpi.alert{background:var(--sand-bg);border-color:var(--sand-rule)}
+.kpi.alert .v,.kpi.alert .l{color:var(--sand)}
+.dot{width:9px;height:9px;border-radius:3px;display:inline-block;flex:none}
+
+/* chart */
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .axis text{fill:var(--muted);font:11px var(--sans)}
+.chart .grid line{stroke:var(--rule);stroke-width:1}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:7px 9px;border-radius:7px;white-space:nowrap;transform:translate(-50%,-100%);z-index:5;line-height:1.45}
+.tip b{font-weight:600}
+
+/* tables */
+.tablewrap{overflow-x:auto;margin-inline:-4px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+th.sortable{cursor:pointer}
+th.sortable:hover{color:var(--ink)}
+.dom{font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.pill.ok{color:var(--ok);background:color-mix(in oklab,var(--ok) 12%,transparent)}
+.pill.warn{color:var(--warn);background:color-mix(in oklab,var(--warn) 14%,transparent)}
+.pill.error{color:var(--err);background:color-mix(in oklab,var(--err) 12%,transparent)}
+.pill.added{color:var(--added);border-color:color-mix(in oklab,var(--added) 45%,transparent)}
+.pill.changed{color:color-mix(in oklab,var(--changed) 70%,var(--ink));border-color:color-mix(in oklab,var(--changed) 55%,transparent)}
+.pill.removed{color:var(--removed);border-color:color-mix(in oklab,var(--removed) 45%,transparent)}
+.pill.kw{color:var(--sand);background:var(--sand-bg);border-color:var(--sand-rule)}
+.muted{color:var(--muted)}
+.url{font-family:var(--mono);font-size:12px;color:var(--ink-2);word-break:break-all}
+.url a{color:inherit;text-decoration:none}
+.url a:hover{color:var(--accent);text-decoration:underline}
+.ptitle{font-weight:500;color:var(--ink)}
+
+/* heat matrix */
+.heat td,.heat th{padding:0;border:0}
+.heat{border-collapse:separate;border-spacing:3px}
+.heat th{padding:4px 6px;font-size:10.5px;text-transform:none;letter-spacing:0;color:var(--ink-2);font-weight:500;vertical-align:bottom;white-space:normal;min-width:62px;line-height:1.25}
+.heat th.row{text-align:left;font-size:12.5px;color:var(--ink);font-weight:600;white-space:nowrap;padding-right:10px;vertical-align:middle}
+.heat td.c{height:30px;min-width:62px;border-radius:5px;text-align:center;font-variant-numeric:tabular-nums;font-size:12px;cursor:default}
+.heat tr.total th.row,.heat tr.total td.c{font-weight:700}
+.heat tr.total td.c{outline:1px solid var(--rule)}
+
+/* bar list */
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:minmax(90px,190px) 1fr auto;gap:10px;align-items:center;font-size:13px}
+.bar .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .track{height:12px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.bar .fill{height:100%;background:var(--accent);border-radius:0 4px 4px 0}
+.bar .val{font-variant-numeric:tabular-nums;color:var(--ink-2);min-width:4ch;text-align:right}
+.bar .sub{color:var(--muted);font-size:12px}
+
+/* keyword alerts */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--rule);background:var(--surface);border-radius:999px;padding:4px 10px;font-size:12.5px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip .c{font-variant-numeric:tabular-nums;color:var(--muted)}
+.chip[aria-pressed=true]{background:var(--sand-bg);border-color:var(--sand-rule);color:var(--sand)}
+.chip[aria-pressed=true] .c{color:var(--sand)}
+.chip.k[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.alerts{display:grid;gap:0;max-height:520px;overflow:auto;margin-top:12px}
+.alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;padding:11px 2px;border-top:1px solid var(--rule)}
+.alert .sym{font-family:var(--mono);font-weight:600;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:13px}
+.alert .sym.add{background:color-mix(in oklab,var(--added) 16%,transparent);color:var(--added)}
+.alert .sym.rem{background:color-mix(in oklab,var(--removed) 16%,transparent);color:var(--removed)}
+.alert .sym.men{background:var(--surface-2);color:var(--ink-2)}
+.alert .line1{display:flex;gap:6px 10px;flex-wrap:wrap;align-items:baseline}
+.alert .line2{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;font-size:12px}
+.alert .terms{font-family:var(--mono);font-size:11.5px;color:var(--sand)}
+.empty{color:var(--muted);padding:18px 0;font-size:13px}
+
+/* feed */
+.feedtools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.feedtools input[type=search]{flex:1 1 220px}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--ink-2);cursor:pointer}
+.diff{font-size:12px;color:var(--ink-2);margin-top:3px}
+.diff del{color:var(--removed)}
+.diff ins{color:var(--added);text-decoration:none}
+.more{margin-top:12px;display:flex;justify-content:center}
+
+/* exclusions */
+.rules{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rule{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:1px solid var(--rule);border-radius:6px;padding:2px 7px;display:inline-flex;gap:6px;align-items:center}
+.rule button{border:0;background:none;padding:0;cursor:pointer;color:var(--muted);font-size:14px;line-height:1}
+.rule.view{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.hideform{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.hideform input{flex:1 1 220px;font-family:var(--mono);font-size:12.5px}
+.how{color:var(--ink-2);max-width:78ch}
+.how code{font-family:var(--mono);font-size:12.5px;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+.how p{margin:.4em 0 .8em}
+footer{color:var(--muted);font-size:12.5px;padding-block:20px 40px;border-top:1px solid var(--rule)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:40}
+@media (prefers-reduced-motion:no-preference){.bar .fill{transition:width .35s ease}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="wordmark">Competitor Watch</span><span class="sub">Sitemap &amp; SEO change tracking</span></div>
+    <label class="field" for="client">Client <select id="client"></select></label>
+    <a class="btn" id="runscan" href="#" target="_blank" rel="noopener" title="Open GitHub Actions to run a scan now or view past runs" hidden>Run a scan</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="sample" id="sampleNote" hidden>You are looking at sample data so you can see how the dashboard works. Real results replace it after the first two daily scans.</div>
+    <h1 id="headline">Know every move your competitors make.</h1>
+    <div class="meta" id="heroMeta"></div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Date range" id="rangeSeg">
+        <button type="button" data-range="7" aria-pressed="true">7 days</button>
+        <button type="button" data-range="30" aria-pressed="false">30 days</button>
+        <button type="button" data-range="90" aria-pressed="false">90 days</button>
+      </div>
+      <label class="field" for="compSel">Competitor <select id="compSel"><option value="">All competitors</option></select></label>
+      <label class="field" for="kwSel">Keyword group <select id="kwSel"><option value="">Any</option></select></label>
+    </div>
+  </section>
+
+  <main>
+    <section class="panel" id="briefPanel" hidden>
+      <div class="brief"><span class="tag" id="briefTag">AI brief</span><p id="briefText"></p></div>
+    </section>
+
+    <section class="kpis" id="kpis" aria-label="Totals for the selected range"></section>
+
+    <div class="grid2">
+      <section class="panel">
+        <div class="head">
+          <h2>Activity</h2>
+          <div class="tools"><button class="btn" type="button" id="actToggle" aria-pressed="false">Table view</button></div>
+          <div class="note">Pages added, changed and removed per day across the selected competitors.</div>
+        </div>
+        <div class="legend" id="actLegend"></div>
+        <div class="chart" id="actChart"></div>
+        <div class="tablewrap" id="actTable" hidden></div>
+      </section>
+
+      <section class="panel" id="kwPanel">
+        <div class="head">
+          <h2>Keyword alerts</h2>
+          <div class="note">Pages where a competitor added, removed or changed content mentioning your keywords. Matched in the URL, title, H1 and H2s.</div>
+        </div>
+        <div class="chips" id="kwChips"></div>
+        <div class="alerts" id="kwList"></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <div class="head">
+        <h2>What competitors are publishing</h2>
+        <div class="tools">
+          <div class="seg" role="group" aria-label="Content view" id="mixSeg">
+            <button type="button" data-mix="range" aria-pressed="true">New and updated</button>
+            <button type="button" data-mix="site" aria-pressed="false">Whole site today</button>
+          </div>
+        </div>
+        <div class="note" id="mixNote"></div>
+      </div>
+      <div class="tablewrap"><table class="heat" id="heat"></table></div>
+    </section>
+
+    <section class="panel">
+      <div class="head">
+        <h2>Competitors</h2>
+        <div class="note">Click a column to sort. Excluded pages are dropped by your rules before any comparison.</div>
+      </div>
+      <div class="tablewrap"><table id="compTable"></table></div>
+    </section>
+
+    <div class="grid2 even">
+        <section class="panel">
+          <div class="head">
+            <h2>Where pages are being added</h2>
+            <div class="note">Top site sections by new pages in the selected range.</div>
+          </div>
+          <div class="bars" id="sections"></div>
+        </section>
+
+        <section class="panel">
+          <div class="head">
+            <h2>Excluded paths</h2>
+            <div class="note">These sections are ignored at scan time, so they never show up as changes. Edit them in <code>config/clients.yaml</code>.</div>
+          </div>
+          <div class="eyebrow">Scan rules</div>
+          <div class="rules" id="ruleList"></div>
+          <div class="eyebrow" style="margin-top:16px">Hide in this view</div>
+          <form class="hideform" id="hideForm">
+            <input type="text" id="hideInput" placeholder="/press/ or */events/*" aria-label="Path to hide">
+            <button class="btn" type="submit">Hide</button>
+          </form>
+          <div class="rules" id="viewRules"></div>
+          <p class="muted" style="font-size:12.5px;margin:10px 0 0">Hiding here filters this dashboard only, in this browser. Add the path to <code>clients.yaml</code> to exclude it for everyone.</p>
+        </section>
+      </div>
+
+    <section class="panel">
+      <div class="head">
+        <h2>Change feed</h2>
+        <div class="tools">
+          <button class="btn" type="button" id="csvBtn">Export CSV</button>
+          <button class="btn" type="button" id="csvCopy">Copy CSV</button>
+        </div>
+      </div>
+      <div class="feedtools">
+        <input type="search" id="q" placeholder="Search URLs and titles" aria-label="Search URLs and titles">
+        <select id="kindSel" aria-label="Change type"><option value="">All changes</option><option value="added">Added</option><option value="changed">Changed</option><option value="removed">Removed</option></select>
+        <select id="typeSel" aria-label="Content type"><option value="">All content types</option></select>
+        <label class="check" for="kwOnly"><input type="checkbox" id="kwOnly"> Keyword matches only</label>
+      </div>
+      <div class="tablewrap"><table id="feed"></table></div>
+      <div class="more"><button class="btn" type="button" id="moreBtn" hidden>Show more</button></div>
+    </section>
+
+    <section class="panel how">
+      <div class="head"><h2>How this works</h2></div>
+      <p>A GitHub Action scans each competitor's XML sitemap every day. It records pages that were <b>added</b>, <b>removed</b> or had their <b>lastmod</b> date change. For new and changed pages it also reads the title, meta description, H1, H2s, canonical and HTTP status.</p>
+      <p>Each page is sorted into a content type (blog, webinar, whitepaper and so on) from its URL and title, and checked against the client's keyword groups. A keyword alert fires when a matching page is added or removed, or when a changed page gains or loses one of your terms.</p>
+      <p>To change competitors, keywords, content types or exclusions, edit <code>config/clients.yaml</code> in the repository. There is no limit on the number of competitors.</p>
+    </section>
+  </main>
+
+</div>
+
+<div class="tip" id="tip" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => Number(n || 0).toLocaleString("en-GB");
+const KINDS = [["added","Added"],["changed","Changed"],["removed","Removed"]];
+const store = {
+  get(k, d){ try { const v = localStorage.getItem("cw:" + k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem("cw:" + k, JSON.stringify(v)); } catch(e){} }
+};
+
+const S = { clients: [], data: null, client: "", range: 7, comp: "", kw: "", mix: "range",
+  q: "", kind: "", type: "", kwOnly: false, shown: 30, sort: { key: "added", dir: -1 }, hide: [], showTable: false };
+
+/* ---------- state in the URL hash, e.g. #client=five-sigma&range=30 ---------- */
+function readHash(){
+  const h = (location.hash || "").replace(/^#/, "");
+  if (!h) return;
+  if (/^\d+$/.test(h)) { S.range = +h; return; }
+  h.split("&").forEach(p => { const [k, v] = p.split("="); if (k === "client") S.client = decodeURIComponent(v || ""); if (k === "range" && /^(7|30|90)$/.test(v)) S.range = +v; });
+}
+function writeHash(){
+  try { history.replaceState(null, "", "#client=" + encodeURIComponent(S.client) + "&range=" + S.range); } catch(e){}
+}
+
+/* ---------- Run a scan link (GitHub Pages only) ---------- */
+(function(){
+  const m = location.hostname.match(/^([^.]+)\.github\.io$/i);
+  if (!m) return;
+  const repo = location.pathname.split("/").filter(Boolean)[0] || (m[1] + ".github.io");
+  const a = $("#runscan"); a.href = "https://github.com/" + m[1] + "/" + repo + "/actions/workflows/scan.yml"; a.hidden = false;
+})();
+
+async function getJSON(u){ const r = await fetch(u, { cache: "no-store" }); if (!r.ok) throw new Error(u + " " + r.status); return r.json(); }
+
+async function init(){
+  readHash();
+  try { S.clients = await getJSON("data/clients.json"); } catch(e){ S.clients = []; }
+  const sel = $("#client");
+  if (!S.clients.length){ $("#headline").textContent = "No scan data yet."; $("#heroMeta").textContent = "Run the first scan from GitHub Actions, then reload this page."; return; }
+  sel.innerHTML = S.clients.map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("");
+  if (!S.clients.some(c => c.id === S.client)) S.client = store.get("client", S.clients[0].id);
+  if (!S.clients.some(c => c.id === S.client)) S.client = S.clients[0].id;
+  sel.value = S.client;
+  await loadClient();
+}
+
+async function loadClient(){
+  try { S.data = await getJSON("data/" + encodeURIComponent(S.client) + ".json"); }
+  catch(e){ $("#headline").textContent = "Could not load this client's data."; $("#heroMeta").textContent = "Check that the scan has run and committed docs/data/" + S.client + ".json."; return; }
+  store.set("client", S.client);
+  S.hide = store.get("hide:" + S.client, []);
+  S.comp = ""; S.kw = ""; S.shown = 30;
+  const d = S.data;
+  $("#compSel").innerHTML = '<option value="">All competitors</option>' + d.competitors.map(c => `<option value="${esc(c.domain)}">${esc(c.name || c.domain)}</option>`).join("");
+  $("#kwSel").innerHTML = '<option value="">Any</option>' + (d.keywords || []).map(k => `<option>${esc(k.group)}</option>`).join("");
+  $("#typeSel").innerHTML = '<option value="">All content types</option>' + (d.asset_types || []).map(t => `<option>${esc(t)}</option>`).join("");
+  $("#sampleNote").hidden = !d.sample;
+  renderRules();
+  render();
+}
+
+/* ---------- filtering ---------- */
+function globToRe(p){
+  p = p.trim(); if (!p) return null;
+  if (p.startsWith("regex:")) { try { return new RegExp(p.slice(6), "i"); } catch(e){ return null; } }
+  if (!/[*?]/.test(p)) return { test: s => s.toLowerCase().startsWith(p.toLowerCase()) };
+  return new RegExp("^" + p.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".") + "$", "i");
+}
+function cutoff(){
+  const end = new Date((S.data.scan_date || new Date().toISOString().slice(0,10)) + "T00:00:00Z");
+  const start = new Date(end); start.setUTCDate(start.getUTCDate() - (S.range - 1));
+  return start.toISOString().slice(0,10);
+}
+function baseEvents(){
+  const from = cutoff(), hides = S.hide.map(globToRe).filter(Boolean);
+  return S.data.events.filter(e => e.date >= from
+    && (!S.comp || e.competitor === S.comp)
+    && !hides.some(r => r.test(e.path || "/")));
+}
+function kwEvents(evs){ return evs.filter(e => e.keywords && e.keywords.length && (!S.kw || e.keywords.includes(S.kw))); }
+
+/* ---------- render ---------- */
+function render(){
+  writeHash();
+  document.querySelectorAll("#rangeSeg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.range === S.range)));
+  const d = S.data, evs = baseEvents();
+  const comps = d.competitors.length;
+  $("#headline").textContent = d.client.name + " vs " + comps + " competitor" + (comps === 1 ? "" : "s");
+  const last = d.competitors.map(c => c.last_scan).filter(Boolean).sort().pop() || d.scan_date;
+  const tracked = d.competitors.reduce((a, c) => a + (c.tracked || 0), 0);
+  const issues = d.competitors.filter(c => c.status && c.status !== "ok").length;
+  $("#heroMeta").innerHTML = `<span>Last scan <b>${esc(niceDate(last))}</b></span><span><b>${fmt(tracked)}</b> pages tracked</span>` +
+    (issues ? `<span><b>${issues}</b> competitor${issues > 1 ? "s" : ""} need${issues > 1 ? "" : "s"} attention</span>` : "");
+
+  if (d.brief && d.brief.text){ $("#briefPanel").hidden = false; $("#briefText").textContent = d.brief.text; $("#briefTag").textContent = "AI brief · " + niceDate(d.brief.date); }
+  else $("#briefPanel").hidden = true;
+
+  renderKpis(evs); renderActivity(evs); renderKeywords(evs); renderMix(evs); renderComps(evs); renderSections(evs); renderFeed(evs);
+}
+
+function niceDate(s){ if (!s) return ""; const d = new Date(s.slice(0,10) + "T00:00:00Z"); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); }
+function shortDate(s){ const d = new Date(s + "T00:00:00Z"); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }); }
+
+function renderKpis(evs){
+  const c = k => evs.filter(e => e.kind === k).length;
+  const alerts = kwEvents(evs).length;
+  $("#kpis").innerHTML = KINDS.map(([k, l]) => `<div class="kpi"><div class="v">${fmt(c(k))}</div><div class="l"><span class="dot" style="background:var(--${k})"></span>Pages ${l.toLowerCase()}</div></div>`).join("") +
+    `<div class="kpi alert"><div class="v">${fmt(alerts)}</div><div class="l">Keyword alerts${S.kw ? " · " + esc(S.kw) : ""}</div></div>`;
+}
+
+/* activity stacked bars */
+function days(){ const out = [], end = new Date(S.data.scan_date + "T00:00:00Z"); for (let i = S.range - 1; i >= 0; i--){ const d = new Date(end); d.setUTCDate(d.getUTCDate() - i); out.push(d.toISOString().slice(0,10)); } return out; }
+function renderActivity(evs){
+  const ds = days(), by = {};
+  ds.forEach(d => by[d] = { added: 0, changed: 0, removed: 0 });
+  evs.forEach(e => { if (by[e.date]) by[e.date][e.kind]++; });
+  $("#actLegend").innerHTML = KINDS.map(([k, l]) => `<span><span class="dot" style="background:var(--${k})"></span>${l}</span>`).join("");
+  const W = 640, H = 220, pl = 34, pr = 6, pt = 12, pb = 26, iw = W - pl - pr, ih = H - pt - pb;
+  const max = Math.max(1, ...ds.map(d => by[d].added + by[d].changed + by[d].removed));
+  const step = niceStep(max), top = Math.ceil(max / step) * step;
+  const y = v => pt + ih - (v / top) * ih, bw = iw / ds.length, gap = Math.min(4, bw * 0.25), w = Math.max(1, bw - gap);
+  let g = '<g class="grid">';
+  for (let v = 0; v <= top; v += step) g += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}"/>`;
+  g += '</g><g class="axis">';
+  for (let v = 0; v <= top; v += step) g += `<text x="${pl - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  const every = Math.ceil(ds.length / 7);
+  ds.forEach((d, i) => { if ((ds.length - 1 - i) % every === 0) g += `<text x="${pl + i * bw + bw / 2}" y="${H - 6}" text-anchor="middle">${shortDate(d)}</text>`; });
+  g += '</g><g>';
+  ds.forEach((d, i) => {
+    let acc = 0; const x = pl + i * bw + gap / 2, v = by[d], tot = v.added + v.changed + v.removed;
+    KINDS.forEach(([k], j) => {
+      if (!v[k]) return;
+      const y0 = y(acc), y1 = y(acc + v[k]); acc += v[k];
+      const h = Math.max(1, y0 - y1 - (acc < tot ? 2 : 0));
+      const isTop = acc === tot, r = Math.min(3, w / 2, h);
+      g += isTop ? `<path d="${roundTop(x, y1, w, h, r)}" fill="var(--${k})"/>` : `<rect x="${x}" y="${y1 + (acc < tot ? 0 : 0)}" width="${w}" height="${h}" fill="var(--${k})"/>`;
+    });
+    g += `<rect x="${pl + i * bw}" y="${pt}" width="${bw}" height="${ih}" fill="transparent" data-d="${d}" class="hit"/>`;
+  });
+  g += `</g><line x1="${pl}" x2="${W - pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--muted)" stroke-width="1"/>`;
+  const el = $("#actChart");
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily pages added, changed and removed">${g}</svg>`;
+  el.querySelectorAll(".hit").forEach(r => {
+    r.addEventListener("mousemove", ev => { const v = by[r.dataset.d]; showTip(ev, el, `<b>${shortDate(r.dataset.d)}</b><br>Added ${v.added} · Changed ${v.changed} · Removed ${v.removed}`); });
+    r.addEventListener("mouseleave", hideTip);
+  });
+  $("#actTable").innerHTML = `<table><thead><tr><th>Date</th>${KINDS.map(([, l]) => `<th class="n">${l}</th>`).join("")}</tr></thead><tbody>` +
+    ds.slice().reverse().map(d => `<tr><td>${shortDate(d)}</td>${KINDS.map(([k]) => `<td class="n">${by[d][k]}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
+  $("#actChart").hidden = S.showTable; $("#actTable").hidden = !S.showTable;
+  $("#actToggle").textContent = S.showTable ? "Chart view" : "Table view";
+}
+function roundTop(x, y, w, h, r){ return `M${x},${y + h}V${y + r}Q${x},${y} ${x + r},${y}H${x + w - r}Q${x + w},${y} ${x + w},${y + r}V${y + h}Z`; }
+function niceStep(max){ const raw = max / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p; return Math.max(1, (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p); }
+function showTip(ev, host, html){ const t = $("#tip"); t.innerHTML = html; t.hidden = false; t.style.left = ev.clientX + "px"; t.style.top = (ev.clientY - 10) + "px"; t.style.position = "fixed"; }
+function hideTip(){ $("#tip").hidden = true; }
+
+/* keyword alerts */
+function renderKeywords(evs){
+  const groups = (S.data.keywords || []).map(k => k.group);
+  const all = evs.filter(e => e.keywords && e.keywords.length);
+  const count = g => all.filter(e => e.keywords.includes(g)).length;
+  $("#kwChips").innerHTML = `<button type="button" class="chip" data-g="" aria-pressed="${!S.kw}">All groups <span class="c">${all.length}</span></button>` +
+    groups.map(g => `<button type="button" class="chip" data-g="${esc(g)}" aria-pressed="${S.kw === g}">${esc(g)} <span class="c">${count(g)}</span></button>`).join("");
+  const list = kwEvents(evs);
+  if (!groups.length){ $("#kwList").innerHTML = '<div class="empty">No keyword groups set for this client. Add them under <code>keywords</code> in clients.yaml.</div>'; return; }
+  if (!list.length){ $("#kwList").innerHTML = '<div class="empty">No keyword activity in this range.</div>'; return; }
+  $("#kwList").innerHTML = list.slice(0, 120).map(e => {
+    const add = e.kw_added || {}, rem = e.kw_removed || {}, pres = e.kw_present || {};
+    let sym = "men", s = "~", label = "Mentioned on updated page";
+    if (Object.keys(rem).length && !Object.keys(add).length){ sym = "rem"; s = "−"; label = e.kind === "removed" ? "Page removed" : "Keyword dropped"; }
+    else if (Object.keys(add).length){ sym = "add"; s = "+"; label = e.kind === "added" ? "New page" : "Keyword added"; }
+    const terms = (o, pre) => Object.entries(o).filter(([g]) => !S.kw || g === S.kw).map(([g, t]) => `<span class="terms">${pre}${esc(g)}: ${esc(t.join(", "))}</span>`).join("");
+    return `<div class="alert"><span class="sym ${sym}" aria-hidden="true">${s}</span>
+      <div class="line1"><span class="dom">${esc(e.competitor)}</span><span class="muted">${esc(label)} · ${shortDate(e.date)}</span></div>
+      <div class="line2" style="flex-direction:column;gap:2px"><span class="ptitle">${esc(e.title || e.h1 || e.path)}</span>
+        <span class="url"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.path)}</a></span>
+        <span style="display:flex;gap:4px 10px;flex-wrap:wrap">${terms(add, "+ ")}${terms(rem, "− ")}${terms(pres, "")}</span></div></div>`;
+  }).join("");
+}
+
+/* content type matrix */
+function heatColor(v, max){
+  if (!v) return "background:var(--surface-2);color:var(--muted)";
+  const t = Math.sqrt(v / max), pct = Math.round(14 + t * 76);
+  return `background:color-mix(in oklab,var(--accent) ${pct}%,var(--surface));color:${pct > 52 ? "var(--on-accent)" : "var(--ink)"}`;
+}
+function renderMix(evs){
+  document.querySelectorAll("#mixSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mix === S.mix)));
+  const types = S.data.asset_types || [];
+  const comps = S.data.competitors.filter(c => !S.comp || c.domain === S.comp);
+  const M = {}, totals = {};
+  comps.forEach(c => M[c.domain] = {});
+  if (S.mix === "range"){
+    $("#mixNote").textContent = "Pages added or updated in the selected range, by content type. Darker cells show where each competitor is putting effort. Removed pages are not counted.";
+    evs.filter(e => e.kind !== "removed").forEach(e => { if (M[e.competitor]) M[e.competitor][e.type] = (M[e.competitor][e.type] || 0) + 1; });
+  } else {
+    $("#mixNote").textContent = "Every tracked page on each competitor's site today, by content type. Useful for spotting who has built up a library of webinars, reports or case studies.";
+    comps.forEach(c => Object.entries(c.inventory || {}).forEach(([t, n]) => M[c.domain][t] = n));
+  }
+  types.forEach(t => totals[t] = comps.reduce((a, c) => a + (M[c.domain][t] || 0), 0));
+  const shown = types.filter(t => totals[t] > 0);
+  if (!shown.length){ $("#heat").innerHTML = '<tbody><tr><td class="empty">No content activity in this range.</td></tr></tbody>'; return; }
+  const rowTot = c => shown.reduce((a, t) => a + (M[c.domain][t] || 0), 0);
+  const rows = comps.slice().sort((a, b) => rowTot(b) - rowTot(a));
+  const max = Math.max(1, ...rows.flatMap(c => shown.map(t => M[c.domain][t] || 0)));
+  const tmax = Math.max(1, ...shown.map(t => totals[t]));
+  const order = shown.slice().sort((a, b) => totals[b] - totals[a]);
+  let h = `<thead><tr><th></th>${order.map(t => `<th>${esc(t)}</th>`).join("")}</tr></thead><tbody>`;
+  h += `<tr class="total"><th class="row">All competitors</th>${order.map(t => `<td class="c" style="${heatColor(totals[t], tmax)}" title="All competitors · ${esc(t)}: ${totals[t]}">${fmt(totals[t])}</td>`).join("")}</tr>`;
+  rows.forEach(c => { h += `<tr><th class="row">${esc(c.name || c.domain)}</th>${order.map(t => { const v = M[c.domain][t] || 0; return `<td class="c" style="${heatColor(v, max)}" title="${esc(c.domain)} · ${esc(t)}: ${v}">${v ? fmt(v) : ""}</td>`; }).join("")}</tr>`; });
+  $("#heat").innerHTML = h + "</tbody>";
+}
+
+/* competitors table */
+function renderComps(evs){
+  const rows = S.data.competitors.map(c => {
+    const mine = evs.filter(e => e.competitor === c.domain);
+    const cnt = k => mine.filter(e => e.kind === k).length;
+    const types = {}; mine.filter(e => e.kind !== "removed").forEach(e => types[e.type] = (types[e.type] || 0) + 1);
+    const topType = Object.entries(types).sort((a, b) => b[1] - a[1])[0];
+    return { c, domain: c.domain, tracked: c.tracked || 0, excluded: c.excluded || 0, added: cnt("added"), changed: cnt("changed"), removed: cnt("removed"),
+      kw: mine.filter(e => e.keywords && e.keywords.length).length, top: topType ? topType[0] : "", status: c.status || "ok", last: c.last_scan || "" };
+  });
+  const { key, dir } = S.sort;
+  rows.sort((a, b) => (typeof a[key] === "string" ? a[key].localeCompare(b[key]) : a[key] - b[key]) * dir || a.domain.localeCompare(b.domain));
+  const cols = [["domain","Competitor",""],["tracked","Tracked","n"],["excluded","Excluded","n"],["added","Added","n"],["changed","Changed","n"],["removed","Removed","n"],["kw","Keyword alerts","n"],["top","Most active type",""],["status","Status",""]];
+  const arrow = k => k === key ? (dir > 0 ? " ↑" : " ↓") : "";
+  let h = `<thead><tr>${cols.map(([k, l, cl]) => `<th class="sortable ${cl}" data-k="${k}" aria-sort="${k === key ? (dir > 0 ? "ascending" : "descending") : "none"}">${l}${arrow(k)}</th>`).join("")}</tr></thead><tbody>`;
+  rows.forEach(r => {
+    const st = r.status === "ok" ? `<span class="pill ok">OK</span>` : `<span class="pill ${r.status === "warning" ? "warn" : "error"}" title="${esc(r.c.message || "")}">${r.status === "warning" ? "Check" : "Error"}</span>`;
+    const base = r.c.baseline ? ' <span class="pill warn" title="First scan. Changes appear from the next one.">Baseline</span>' : "";
+    h += `<tr><td><a class="dom" href="https://${esc(r.domain)}" target="_blank" rel="noopener" style="color:var(--ink);text-decoration:none">${esc(r.c.name || r.domain)}</a>${r.c.message && r.status !== "ok" ? `<div class="muted" style="font-size:12px;max-width:42ch">${esc(r.c.message)}</div>` : ""}</td>
+      <td class="n">${fmt(r.tracked)}</td><td class="n muted">${fmt(r.excluded)}</td><td class="n">${fmt(r.added)}</td><td class="n">${fmt(r.changed)}</td><td class="n">${fmt(r.removed)}</td>
+      <td class="n">${r.kw ? `<span class="pill kw">${r.kw}</span>` : '<span class="muted">0</span>'}</td><td>${esc(r.top) || '<span class="muted">None</span>'}</td><td>${st}${base}</td></tr>`;
+  });
+  $("#compTable").innerHTML = h + "</tbody>";
+}
+
+/* sections */
+function renderSections(evs){
+  const m = {};
+  evs.filter(e => e.kind === "added").forEach(e => { const k = e.section || "/"; (m[k] = m[k] || { n: 0, c: new Set() }).n++; m[k].c.add(e.competitor); });
+  const list = Object.entries(m).sort((a, b) => b[1].n - a[1].n).slice(0, 12);
+  if (!list.length){ $("#sections").innerHTML = '<div class="empty">No new pages in this range.</div>'; return; }
+  const max = list[0][1].n;
+  $("#sections").innerHTML = list.map(([s, v]) => `<div class="bar"><div class="lbl url" title="${esc(s)}">${esc(s)}</div><div class="track"><div class="fill" style="width:${(v.n / max * 100).toFixed(1)}%"></div></div><div class="val">${v.n} <span class="sub">· ${v.c.size} co.</span></div></div>`).join("");
+}
+
+/* feed */
+function feedRows(evs){
+  const q = S.q.trim().toLowerCase();
+  return evs.filter(e => (!S.kind || e.kind === S.kind) && (!S.type || e.type === S.type)
+    && (!S.kwOnly || (e.keywords && e.keywords.length && (!S.kw || e.keywords.includes(S.kw))))
+    && (!q || (e.url + " " + (e.title || "") + " " + (e.h1 || "")).toLowerCase().includes(q)));
+}
+function renderFeed(evs){
+  const rows = feedRows(evs);
+  if (!rows.length){ $("#feed").innerHTML = '<tbody><tr><td class="empty">No changes match these filters.</td></tr></tbody>'; $("#moreBtn").hidden = true; return; }
+  let h = `<thead><tr><th>Date</th><th>Change</th><th>Page</th><th>Type</th></tr></thead><tbody>`;
+  rows.slice(0, S.shown).forEach(e => {
+    let diff = "";
+    if (e.diffs){ diff = Object.entries(e.diffs).map(([f, [a, b]]) => `<div class="diff">${esc(f)}: <del>${esc(a || "(empty)")}</del> → <ins>${esc(b || "(empty)")}</ins></div>`).join(""); }
+    const kw = e.keywords && e.keywords.length ? `<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">${e.keywords.map(g => `<span class="pill kw">${esc(g)}</span>`).join("")}</div>` : "";
+    const flags = (e.status && e.status !== 200 ? ` <span class="pill error">HTTP ${esc(e.status)}</span>` : "") + (e.noindex ? ' <span class="pill warn">noindex</span>' : "");
+    h += `<tr><td style="white-space:nowrap">${shortDate(e.date)}</td><td><span class="pill ${e.kind}">${e.kind[0].toUpperCase() + e.kind.slice(1)}</span></td>
+      <td><div class="dom" style="font-size:12px">${esc(e.competitor)}</div>${e.title ? `<div class="ptitle">${esc(e.title)}</div>` : ""}<div class="url"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.path)}</a>${flags}</div>${diff}${kw}</td>
+      <td style="white-space:nowrap">${esc(e.type)}</td></tr>`;
+  });
+  $("#feed").innerHTML = h + "</tbody>";
+  $("#moreBtn").hidden = rows.length <= S.shown;
+  $("#moreBtn").textContent = `Show more (${fmt(rows.length - S.shown)} left)`;
+}
+function csv(){
+  const rows = feedRows(baseEvents());
+  const cols = ["date","competitor","kind","type","url","title","h1","description","status","keywords","keywords_added","keywords_removed"];
+  const q = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+  const flat = o => Object.entries(o || {}).map(([g, t]) => g + " (" + t.join(", ") + ")").join("; ");
+  return [cols.join(",")].concat(rows.map(e => [e.date, e.competitor, e.kind, e.type, e.url, e.title, e.h1, e.description, e.status, (e.keywords || []).join("; "), flat(e.kw_added), flat(e.kw_removed)].map(q).join(","))).join("\n");
+}
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 2200); }
+
+/* exclusions */
+function renderRules(){
+  const ex = S.data.exclusions || {};
+  const items = (ex.global || []).map(p => ({ p, s: "all clients" })).concat((ex.client || []).map(p => ({ p, s: "this client" })));
+  Object.entries(ex.competitors || {}).forEach(([d, ps]) => ps.forEach(p => items.push({ p, s: d })));
+  $("#ruleList").innerHTML = items.length ? items.map(i => `<span class="rule" title="Applies to ${esc(i.s)}">${esc(i.p)}${i.s !== "all clients" ? ` <span class="muted">· ${esc(i.s)}</span>` : ""}</span>`).join("") : '<span class="muted">No exclusions set.</span>';
+  $("#viewRules").innerHTML = S.hide.map((p, i) => `<span class="rule view">${esc(p)}<button type="button" data-i="${i}" aria-label="Stop hiding ${esc(p)}">×</button></span>`).join("");
+}
+
+/* ---------- events ---------- */
+$("#client").addEventListener("change", e => { S.client = e.target.value; loadClient(); });
+$("#rangeSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; S.range = +b.dataset.range; S.shown = 30; render(); });
+$("#mixSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; S.mix = b.dataset.mix; renderMix(baseEvents()); });
+$("#compSel").addEventListener("change", e => { S.comp = e.target.value; S.shown = 30; render(); });
+$("#kwSel").addEventListener("change", e => { S.kw = e.target.value; render(); });
+$("#kwChips").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return; S.kw = b.dataset.g; $("#kwSel").value = S.kw; render(); });
+$("#actToggle").addEventListener("click", () => { S.showTable = !S.showTable; $("#actToggle").setAttribute("aria-pressed", String(S.showTable)); renderActivity(baseEvents()); });
+$("#compTable").addEventListener("click", e => { const th = e.target.closest("th[data-k]"); if (!th) return; const k = th.dataset.k; S.sort = { key: k, dir: S.sort.key === k ? -S.sort.dir : (["domain","top","status"].includes(k) ? 1 : -1) }; renderComps(baseEvents()); });
+$("#q").addEventListener("input", e => { S.q = e.target.value; S.shown = 30; renderFeed(baseEvents()); });
+$("#kindSel").addEventListener("change", e => { S.kind = e.target.value; S.shown = 30; renderFeed(baseEvents()); });
+$("#typeSel").addEventListener("change", e => { S.type = e.target.value; S.shown = 30; renderFeed(baseEvents()); });
+$("#kwOnly").addEventListener("change", e => { S.kwOnly = e.target.checked; S.shown = 30; renderFeed(baseEvents()); });
+$("#moreBtn").addEventListener("click", () => { S.shown += 30; renderFeed(baseEvents()); });
+$("#csvBtn").addEventListener("click", () => {
+  try {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv()], { type: "text/csv" }));
+    a.download = `competitor-watch-${S.client}-${S.data.scan_date}-${S.range}d.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+  } catch(e){ toast("Download blocked here. Use Copy CSV instead."); }
+});
+$("#csvCopy").addEventListener("click", () => {
+  const text = csv();
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => toast("CSV copied. Paste it into Sheets or Excel."), () => toast("Copy was blocked by the browser."));
+  else toast("Copy is not available in this browser.");
+});
+$("#hideForm").addEventListener("submit", e => {
+  e.preventDefault(); const v = $("#hideInput").value.trim(); if (!v || !globToRe(v)) return;
+  if (!S.hide.includes(v)) S.hide.push(v); store.set("hide:" + S.client, S.hide); $("#hideInput").value = ""; renderRules(); render(); toast("Hidden in this view: " + v);
+});
+$("#viewRules").addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (!b) return; S.hide.splice(+b.dataset.i, 1); store.set("hide:" + S.client, S.hide); renderRules(); render(); });
+
+init();
+})();
+</script>
+</body>
+</html>
