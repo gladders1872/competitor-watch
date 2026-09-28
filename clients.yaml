@@ -1,0 +1,133 @@
+# Competitor Watch configuration
+# Edit this file on GitHub (pencil icon), then "Commit changes".
+# The next daily scan picks up your changes automatically.
+
+settings:
+  # How many new or changed pages per competitor to open and read per scan
+  # (title, H1, H2s, meta description). Keeps scans polite and fast.
+  max_pages_to_read_per_competitor: 60
+  # Pause between page requests, in seconds
+  request_delay: 0.6
+  # How many days of changes to keep in the dashboard
+  keep_days: 180
+  # AI brief (optional). Needs an ANTHROPIC_API_KEY secret in the repo.
+  ai_brief: true
+  ai_model: claude-sonnet-5
+
+# Paths ignored for EVERY client and competitor.
+# Pattern rules:
+#   /careers/         anything starting with that path
+#   */tag/*           "*" means "anything", so this catches /blog/tag/x too
+#   regex:^/(de|fr)/  a regular expression, for advanced use
+global_exclude:
+  - /careers/
+  - /jobs/
+  - /job/
+  - /privacy
+  - /terms
+  - /cookie
+  - /legal/
+  - /login
+  - /search
+  - /wp-content/
+  - "*/tag/*"
+  - "*/author/*"
+  - "*/page/*"
+  - "*/feed/"
+  # Non-English versions of sites (drop any line you want to keep)
+  - regex:^/(de|fr|es|it|nl|pt|pt-br|ja|jp|zh|ko|he|pl|sv|da|no|fi)(/|$)
+
+# How pages are sorted into asset types. First match wins, top to bottom.
+# "paths" are matched against the URL path, "words" against the page title.
+asset_types:
+  - name: Webinar
+    paths: [/webinar, /webinars/, /on-demand, /ondemand]
+    words: [webinar, on-demand, fireside chat, live session]
+  - name: Whitepaper / eBook
+    paths: [/whitepaper, /white-paper, /ebook, /e-book, /guide, /guides/, /report, /reports/, /research/]
+    words: [whitepaper, white paper, ebook, e-book, guide, report, playbook, benchmark]
+  - name: Case study
+    paths: [/case-stud, /customer-stor, /customers/, /success-stor]
+    words: [case study, customer story, success story]
+  - name: Podcast / Video
+    paths: [/podcast, /video, /videos/, /episode]
+    words: [podcast, episode, video]
+  - name: Event
+    paths: [/event, /events/, /conference]
+    words: [event, conference, summit, meet us at, join us at]
+  - name: News / Press
+    paths: [/news, /press, /media/, /newsroom, /announcement]
+    words: [announces, press release, partners with, launches, raises, appoints]
+  - name: Glossary / Knowledge
+    paths: [/glossary, /faq, /what-is, /learn/, /academy, /knowledge]
+    words: [what is, glossary, definition]
+  - name: Blog
+    paths: [/blog, /insights, /articles/, /article/, /post/, /posts/, /perspectives]
+    words: []
+  - name: Product / Solution
+    paths: [/product, /platform, /solution, /use-case, /features, /capabilities, /lines-of-business, /claims-, /integrations, /partners]
+    words: []
+  - name: Company page
+    paths: [/about, /company, /team, /leadership, /contact, /pricing, /demo]
+    words: []
+  # Anything not matched above is shown as "Other"
+
+clients:
+  - id: five-sigma
+    name: Five Sigma
+    site: fivesigmalabs.com
+
+    # Keyword alerts. Each group gets its own alert when a competitor adds,
+    # removes or changes a page that mentions any of its terms.
+    # Terms are matched in the URL, page title, H1 and H2 headings.
+    # Matching ignores capitals, and hyphens in URLs count as spaces.
+    keywords:
+      - group: Agentic AI
+        terms: [agentic, ai agent, ai agents, autonomous agent, digital coworker, ai coworker]
+      - group: Claims automation
+        terms: [claims automation, automated claims, straight through processing, touchless claims, claims ai]
+      - group: Adjuster productivity
+        terms: [adjuster, claims handler, desk adjuster, adjuster productivity]
+      - group: FNOL
+        terms: [fnol, first notice of loss, intake]
+      - group: Subrogation and recovery
+        terms: [subrogation, recovery, recoveries]
+      - group: Fraud
+        terms: [fraud, siu, special investigations]
+      - group: Litigation
+        terms: [litigation, attorney, legal spend]
+      - group: Claims management system
+        terms: [claims management system, claims management software, core claims, claims platform, guidewire, duck creek]
+      - group: Generative AI
+        terms: [generative ai, genai, gen ai, llm, large language model]
+
+    # Paths ignored for this client only (on top of global_exclude)
+    exclude: []
+
+    competitors:
+      - domain: assured.com
+      - domain: federato.ai
+      - domain: himarley.com
+      - domain: snapsheetclaims.com
+      - domain: tractable.ai
+      - domain: bevaya.ai
+      - domain: sprout.ai
+      - domain: shift-technology.com
+      - domain: agentech.com
+      - domain: claraanalytics.com
+      - domain: charlee.ai
+      - domain: docosoft.com
+      - domain: wilbur.io
+      - domain: omnius.com
+      - domain: cccis.com
+        # CCC is a very large site. Add paths here to ignore sections that
+        # are not relevant to Five Sigma, for example:
+        # exclude:
+        #   - /repair-facilities/
+        #   - /parts/
+        exclude: []
+
+      # Optional per competitor settings:
+      #   name: Display name (defaults to the domain)
+      #   sitemaps: [https://example.com/sitemap.xml]   if auto discovery fails
+      #   exclude: [/some-section/]
