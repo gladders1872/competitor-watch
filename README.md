@@ -1,6 +1,6 @@
 # Competitor Watch
 
-Daily tracking of competitor sitemaps for Wadi Digital clients. It shows which pages competitors add, change and remove, what kind of content they are publishing, and sends keyword alerts when something your client cares about appears or disappears.
+Daily tracking of competitor sitemaps for clients. It shows which pages competitors add, change and remove, what kind of content they are publishing, and sends keyword alerts when something your client cares about appears or disappears.
 
 It runs for free on GitHub: a GitHub Action does the scanning every morning, and GitHub Pages hosts the dashboard.
 
