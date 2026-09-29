@@ -128,8 +128,11 @@ clients:
         exclude: []
 
       # Optional per competitor settings:
+      #   name: Display name (defaults to the domain)
+      #   sitemaps: [https://example.com/sitemap.xml]   if auto discovery fails
+      #   exclude: [/some-section/]
 
-        - id: chargeafter
+  - id: chargeafter
     name: ChargeAfter
     site: chargeafter.com
 
@@ -161,6 +164,3 @@ clients:
       - domain: jifiti.com
       - domain: finmkt.io
       - domain: oneclickcontractor.com
-      #   name: Display name (defaults to the domain)
-      #   sitemaps: [https://example.com/sitemap.xml]   if auto discovery fails
-      #   exclude: [/some-section/]
