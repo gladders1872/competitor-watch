@@ -82,24 +82,38 @@ clients:
     # Terms are matched in the URL, page title, H1 and H2 headings.
     # Matching ignores capitals, and hyphens in URLs count as spaces.
     keywords:
-      - group: Agentic AI
-        terms: [agentic, ai agent, ai agents, autonomous agent, digital coworker, ai coworker]
+      - group: Five Sigma and Clive mentions
+        terms: [five sigma, 5sigma, fivesigma, clive ai, clive]
+      - group: Claims management platform
+        terms: [claims management system, claims management software, claims management solution, claims management platform, claims management service, claim management system, claim management software, claim management solution, claims platform, claims solution, claims processing platform, claims administration, claims tracking, enterprise claims, insurance management solution]
+      - group: P&C claims
+        terms: [p&c, property and casualty, property & casualty, p and c]
+      - group: Property and home claims
+        terms: [property claims, property claim, property insurance claims, home insurance claims, home claims, home claim, high volume claims, high-volume claims]
+      - group: Workers comp
+        terms: [workers comp, workers compensation, "workers' comp", "workers' compensation", "workers’ comp", "workers’ compensation", work comp, injury claims]
+      - group: Liability claims
+        terms: [liability claims, liability claim]
       - group: Claims automation
-        terms: [claims automation, automated claims, straight through processing, touchless claims, claims ai]
-      - group: Adjuster productivity
-        terms: [adjuster, claims handler, desk adjuster, adjuster productivity]
-      - group: FNOL
-        terms: [fnol, first notice of loss, intake]
-      - group: Subrogation and recovery
-        terms: [subrogation, recovery, recoveries]
-      - group: Fraud
-        terms: [fraud, siu, special investigations]
-      - group: Litigation
-        terms: [litigation, attorney, legal spend]
-      - group: Claims management system
-        terms: [claims management system, claims management software, core claims, claims platform, guidewire, duck creek]
-      - group: Generative AI
-        terms: [generative ai, genai, gen ai, llm, large language model]
+        terms: [claims automation, claim automation, automated claims, automated claim, automate claims, automating claims, automated insurance claims, claims workflow automation, workflow automation, claims processing automation, straight through processing, touchless claims]
+      - group: Intake and triage
+        terms: [claim intake, claims intake, fnol, first notice of loss, triage]
+      - group: AI claims agents and assistants
+        terms: [ai claims, ai claim, claims ai, ai agent, ai assistant, claims assistant, claims agent, agentic, ai powered claims, ai-powered claims, ai driven claims, ai-driven claims]
+      - group: Decision support and analytics
+        terms: [decision support, predictive analytics, claims analytics, claims data, claims insights, data insights, insurance reporting]
+      - group: Document AI and NLP
+        terms: [document classification, document ai, intelligent document processing, natural language processing, nlp]
+      - group: Cycle time and leakage
+        terms: [cycle time, turnaround time, claims handling, claim leakage, claims leakage, leakage, claims efficiency]
+      - group: Cloud and legacy integration
+        terms: [cloud based claims, cloud-based claims, cloud claims, saas claims, legacy system, legacy systems, core system, rip and replace, guidewire, duck creek]
+      - group: Omnichannel communication
+        terms: [omnichannel, omni-channel, claimant communication, policyholder communication, customer communication]
+      - group: Security and compliance
+        terms: [compliance, compliant, soc 2, soc2, data security, regulatory]
+      - group: Digital claims
+        terms: [digital claims, digital insurance, digital property insurance, digital claims processing, claims digitization, claims digitalization]
 
     # Paths ignored for this client only (on top of global_exclude)
     exclude: []
