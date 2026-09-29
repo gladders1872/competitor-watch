@@ -151,24 +151,34 @@ clients:
     site: chargeafter.com
 
     keywords:
+      - group: ChargeAfter mentions
+        terms: [chargeafter, charge after]
+      - group: Multi-lender and waterfall
+        terms: [multi lender, multi-lender, multiple lenders, multiple financing providers, lender network, waterfall, second look, full spectrum]
       - group: Point of sale financing
-        terms: [point of sale financing, pos financing, pos lending, checkout financing, point of sale lending]
-      - group: Buy now pay later
-        terms: [buy now pay later, bnpl, pay over time, pay in 4, installment, installments]
-      - group: Multi-lender platform
-        terms: [multi lender, multi-lender, lender network, waterfall, second look, full spectrum, prime, near prime, subprime]
-      - group: Embedded finance
-        terms: [embedded finance, embedded lending, embedded financing, financing api]
-      - group: Consumer financing
-        terms: [consumer financing, consumer finance, customer financing, retail financing, merchant financing]
+        terms: [point of sale financing, point-of-sale financing, point of sale lending, point-of-sale lending, pos financing, pos lending, checkout financing, checkout finance, in-store financing, in store financing, in-store finance, in store finance]
+      - group: Embedded lending and finance
+        terms: [embedded lending, embedded finance, embedded financing]
+      - group: White label and branded financing
+        terms: [white label, white-label, whitelabel, branded financing, private label]
+      - group: Omnichannel and ecommerce
+        terms: [omnichannel, omni-channel, ecommerce financing, e-commerce financing, ecommerce finance, online financing]
+      - group: Retail and furniture
+        terms: [retail financing, retail finance, retail lending, retail sales finance, retail consumer financing, furniture, large retailers, enterprise retailers]
       - group: Home improvement and contractors
-        terms: [home improvement, contractor, contractors, hvac, roofing, solar, remodeling]
-      - group: Lease to own
-        terms: [lease to own, rent to own, lease purchase]
-      - group: Private label and cards
-        terms: [private label, credit card, card linked, virtual card]
-      - group: Lenders and banks
-        terms: [lender, lenders, bank, banks, credit union, issuer]
+        terms: [home improvement, contractor, contractors, renovation, remodeling, roofing, hvac, solar, dealer financing, home improvement dealers]
+      - group: Buy now pay later
+        terms: [buy now pay later, bnpl, pay over time, pay in 4]
+      - group: Approval rates and conversion
+        terms: [approval rate, approval rates, higher approvals, checkout conversion, conversion rate, close more jobs, average project size, average ticket, subprime, near prime, near-prime, prime and subprime]
+      - group: Banks and lenders
+        terms: [for banks, bank partners, banks, credit union, lenders, lender]
+      - group: Analytics, reporting and compliance
+        terms: [analytics, reporting, compliance, program management, financing programs]
+      - group: Lending platforms and fintech
+        terms: [lending platform, financing platform, digital lending, lending software, lending system, fintech lending, fintech loans, b2b financing, merchant financing]
+      - group: Consumer financing (broad)
+        terms: [consumer financing, consumer finance, consumer lending, customer financing, customer lending, offer financing, sales financing, sales finance]
 
     exclude: []
 
