@@ -1,10 +1,10 @@
 [
   {
-    "id": "chargeafter",
-    "name": "ChargeAfter"
-  },
-  {
     "id": "five-sigma",
     "name": "Five Sigma"
+  },
+  {
+    "id": "chargeafter",
+    "name": "ChargeAfter"
   }
 ]
