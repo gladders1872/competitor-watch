@@ -128,6 +128,39 @@ clients:
         exclude: []
 
       # Optional per competitor settings:
+
+        - id: chargeafter
+    name: ChargeAfter
+    site: chargeafter.com
+
+    keywords:
+      - group: Point of sale financing
+        terms: [point of sale financing, pos financing, pos lending, checkout financing, point of sale lending]
+      - group: Buy now pay later
+        terms: [buy now pay later, bnpl, pay over time, pay in 4, installment, installments]
+      - group: Multi-lender platform
+        terms: [multi lender, multi-lender, lender network, waterfall, second look, full spectrum, prime, near prime, subprime]
+      - group: Embedded finance
+        terms: [embedded finance, embedded lending, embedded financing, financing api]
+      - group: Consumer financing
+        terms: [consumer financing, consumer finance, customer financing, retail financing, merchant financing]
+      - group: Home improvement and contractors
+        terms: [home improvement, contractor, contractors, hvac, roofing, solar, remodeling]
+      - group: Lease to own
+        terms: [lease to own, rent to own, lease purchase]
+      - group: Private label and cards
+        terms: [private label, credit card, card linked, virtual card]
+      - group: Lenders and banks
+        terms: [lender, lenders, bank, banks, credit union, issuer]
+
+    exclude: []
+
+    competitors:
+      - domain: versatilecredit.com
+      - domain: skeps.com
+      - domain: jifiti.com
+      - domain: finmkt.io
+      - domain: oneclickcontractor.com
       #   name: Display name (defaults to the domain)
       #   sitemaps: [https://example.com/sitemap.xml]   if auto discovery fails
       #   exclude: [/some-section/]
