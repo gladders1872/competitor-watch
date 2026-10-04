@@ -34,8 +34,17 @@ global_exclude:
   - "*/author/*"
   - "*/page/*"
   - "*/feed/"
-  # Non-English versions of sites (drop any line you want to keep)
-  - regex:^/(de|fr|es|it|nl|pt|pt-br|ja|jp|zh|ko|he|pl|sv|da|no|fi)(/|$)
+  # Category and tag archive pages (lists of other pages, not content)
+  - "*/category/*"
+  - "*/categories/*"
+  - "*_category/*"
+  - "*-category/*"
+  - "*_tags/*"
+  - "*-tag/*"
+  # Non-English versions of sites, including regional forms like /pt-pt/ or /fr-ca/
+  - regex:^/(de|fr|es|it|nl|pt|ja|jp|zh|ko|he|pl|sv|da|no|fi|tr|ru|cs|hu|ro|ar)([-_][a-z]{2})?(/|$)
+  # Regional copies of English sites, like /en-gb/ or /en-au/
+  - regex:^/en[-_](gb|uk|au|ca|in|ie|nz|za|sg)(/|$)
 
 # How pages are sorted into asset types. First match wins, top to bottom.
 # "paths" are matched against the URL path, "words" against the page title.
@@ -126,6 +135,8 @@ clients:
         name: Liberate (liberateinc.com)
       - domain: riskonnect.com
       - domain: sapiens.com
+        # /us/ mostly repeats pages from the main site
+        exclude: [/us/]
       - domain: shift-technology.com
       - domain: snapsheetclaims.com
       - domain: sprout.ai
