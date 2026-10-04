@@ -120,26 +120,16 @@ clients:
 
     competitors:
       - domain: assured.com
-      - domain: federato.ai
-      - domain: himarley.com
-      - domain: snapsheetclaims.com
-      - domain: tractable.ai
       - domain: bevaya.ai
-      - domain: sprout.ai
+      - domain: insurity.com
+      - domain: liberate.ai
+        name: Liberate (liberateinc.com)
+      - domain: riskonnect.com
+      - domain: sapiens.com
       - domain: shift-technology.com
-      - domain: agentech.com
-      - domain: claraanalytics.com
-      - domain: charlee.ai
-      - domain: docosoft.com
-      - domain: wilbur.io
-      - domain: omnius.com
-      - domain: cccis.com
-        # CCC is a very large site. Add paths here to ignore sections that
-        # are not relevant to Five Sigma, for example:
-        # exclude:
-        #   - /repair-facilities/
-        #   - /parts/
-        exclude: []
+      - domain: snapsheetclaims.com
+      - domain: sprout.ai
+      - domain: tractable.ai
 
       # Optional per competitor settings:
       #   name: Display name (defaults to the domain)
