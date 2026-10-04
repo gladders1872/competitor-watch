@@ -536,7 +536,7 @@ def main():
             new_events.extend(evs)
 
         cutoff = (dt.date.fromisoformat(today) - dt.timedelta(days=keep_days)).isoformat()
-        events = [e for e in old_events + new_events if e["date"] >= cutoff]
+        events = [e for e in old_events + new_events if e["date"] >= cutoff and e["competitor"] in {c["domain"].lower().strip() for c in client["competitors"]}]
         events.sort(key=lambda e: (e["date"], e["competitor"], e["kind"]), reverse=True)
 
         brief = ai_brief(client, events, cfg, today) or old.get("brief")
