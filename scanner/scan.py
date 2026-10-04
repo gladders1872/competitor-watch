@@ -323,7 +323,9 @@ def scan_competitor(client, comp, cfg, today: str):
             summary["tracked"] = len(prev.get("urls", {}))
         return summary, [], prev
 
-    prev_urls = (prev or {}).get("urls", {})
+    # Apply today's exclusion rules to the previous scan too, so adding an
+    # exclusion never shows up as hundreds of "removed" pages.
+    prev_urls = {u: v for u, v in (prev or {}).get("urls", {}).items() if not excluded(u, patterns)}
     # Safety net: a sudden large drop usually means a failed or partial fetch,
     # not a real site change. Do not report mass removals in that case.
     if prev_urls and len(current) < 0.5 * len(prev_urls) and len(prev_urls) > 20:
@@ -536,7 +538,19 @@ def main():
             new_events.extend(evs)
 
         cutoff = (dt.date.fromisoformat(today) - dt.timedelta(days=keep_days)).isoformat()
-        events = [e for e in old_events + new_events if e["date"] >= cutoff and e["competitor"] in {c["domain"].lower().strip() for c in client["competitors"]}]
+        # Keep history only for competitors still listed, and only for paths
+        # that are not excluded by the current rules.
+        rules_by_comp = {
+            c["domain"].lower().strip(): compile_patterns(
+                (cfg.get("global_exclude") or []) + (client.get("exclude") or []) + (c.get("exclude") or []))
+            for c in client["competitors"]
+        }
+        events = [
+            e for e in old_events + new_events
+            if e["date"] >= cutoff
+            and e["competitor"] in rules_by_comp
+            and not excluded(e["url"], rules_by_comp[e["competitor"]])
+        ]
         events.sort(key=lambda e: (e["date"], e["competitor"], e["kind"]), reverse=True)
 
         brief = ai_brief(client, events, cfg, today) or old.get("brief")
